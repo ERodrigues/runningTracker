@@ -1,0 +1,47 @@
+---
+description: Testes JUnit 5 e Spring Boot Test
+globs: "**/*Test.java,**/*Tests.java"
+alwaysApply: false
+---
+
+# Testes
+
+## Stack
+
+- JUnit 5 (`@Test`, `@ParameterizedTest` quando útil).
+- `@SpringBootTest` para integração com contexto completo; `@WebMvcTest` para controllers isolados.
+- `@DataJpaTest` para repositórios; `@MockBean` / mocks apenas onde o slice não cobre a dependência.
+
+## Práticas
+
+- Nomear métodos de teste de forma descritiva (`shouldReturn404WhenRunNotFound`).
+- Arrange / Act / Assert claros; um comportamento principal por teste.
+- Evitar depender de ordem de execução ou estado compartilhado entre testes.
+
+## Exemplo WebMvcTest
+
+```java
+@WebMvcTest(RunController.class)
+class RunControllerTest {
+	@Autowired
+	private MockMvc mockMvc;
+
+	@MockBean
+	private RunService runService;
+
+	@Test
+	void shouldReturnRun() throws Exception {
+		when(runService.findById(1L)).thenReturn(new RunResponse(1L, 5.0));
+
+		mockMvc.perform(get("/api/runs/1"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.distanceKm").value(5.0));
+	}
+}
+```
+
+## Execução
+
+```bash
+./gradlew test --tests "com.runningTracker.RunControllerTest"
+```
