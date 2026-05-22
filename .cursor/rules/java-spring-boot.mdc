@@ -1,0 +1,48 @@
+---
+description: Java 21 e Spring Boot — camadas, API e persistência
+globs: "**/*.java,**/build.gradle,**/settings.gradle,**/*.properties,**/*.yaml,**/*.yml"
+alwaysApply: false
+---
+
+# Java / Spring Boot
+
+## Estilo
+
+- Java 21; usar records para DTOs imutáveis quando fizer sentido.
+- Injeção por construtor; evitar `@Autowired` em campos.
+- Indentação com tab, como no código gerado pelo Initializr.
+
+## Camadas
+
+- REST: `@RestController` + DTOs de request/response; validação com Bean Validation (`jakarta.validation`).
+- Serviços: regras de negócio; transações em `@Transactional` na camada de serviço.
+- Persistência: Spring Data JPA; entidades em pacote dedicado (ex.: `domain` ou `entity`).
+
+## API e erros
+
+- Respostas HTTP coerentes (404 para recurso ausente, 400 para validação).
+- Preferir `@ControllerAdvice` centralizado para erros de API em vez de try/catch repetido nos controllers.
+
+## Exemplo de controller enxuto
+
+```java
+@RestController
+@RequestMapping("/api/runs")
+public class RunController {
+	private final RunService runService;
+
+	public RunController(RunService runService) {
+		this.runService = runService;
+	}
+
+	@GetMapping("/{id}")
+	public RunResponse get(@PathVariable Long id) {
+		return runService.findById(id);
+	}
+}
+```
+
+## Configuração
+
+- Propriedades compartilhadas em `application.properties`; perfis locais em arquivos gitignored.
+- H2 em dev/test; PostgreSQL via Docker Compose (`compose.yaml`) para desenvolvimento com banco real.

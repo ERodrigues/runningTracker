@@ -1,0 +1,24 @@
+---
+description: Comandos, workflow e guardrails do Running Tracker
+alwaysApply: true
+---
+
+# Running Tracker — núcleo
+
+## Comandos
+
+- Build: `./gradlew build`
+- Testes: `./gradlew test` (preferir `--tests` com classe ou método em mudanças pontuais)
+- Executar app: `./gradlew bootRun`
+- Banco local: `docker compose -f compose.yaml up -d`
+
+## Workflow
+
+- Mudanças mínimas; não refatorar código não relacionado à tarefa.
+- Após alterar lógica ou API, rodar testes ou build relevante.
+- Config local e segredos em `application-local.properties` (não versionar).
+
+## Referências
+
+- Visão do projeto e estrutura: `AGENTS.md`
+- Entrada da aplicação: `src/main/java/com/runningTracker/RunningTrackerApplication.java`
